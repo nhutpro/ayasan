@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -34,6 +34,24 @@ const LoginPage: React.FC = () => {
     const router = useRouter();
     const [error, setError] = React.useState<string | null>(null);
 
+    // Redirect if already logged in
+    useEffect(() => {
+        const accessToken = Cookies.get('accessToken');
+        if (accessToken) {
+            try {
+                const payload = JSON.parse(atob(accessToken.split('.')[1]));
+                if (payload.role === 'ADMIN') {
+                    router.push('/admin');
+                } else {
+                    router.push('/'); // Redirect to home or another page if not admin
+                }
+            } catch {
+                Cookies.remove('accessToken');
+                Cookies.remove('refreshToken');
+            }
+        }
+    }, [router]);
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-100">
             <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
@@ -44,12 +62,10 @@ const LoginPage: React.FC = () => {
                     onSubmit={async (values, { setSubmitting }) => {
                         setError(null);
                         try {
-                            const res = await axios.post('http://localhost:5000/login', values);
+                            const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/login`, values);
                             const { accessToken, refreshToken } = res.data;
-                            // Store tokens in cookies (or localStorage if you prefer)
                             Cookies.set('accessToken', accessToken, { secure: true, sameSite: 'strict' });
                             Cookies.set('refreshToken', refreshToken, { secure: true, sameSite: 'strict' });
-                            // Redirect to admin dashboard
                             router.push('/admin');
                         } catch (err: any) {
                             setError(err.response?.data?.error || 'Login failed');

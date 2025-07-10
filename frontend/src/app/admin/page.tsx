@@ -4,6 +4,8 @@ import Worker from "@/app/components/worker";
 import Service from "../components/service";
 import Booking from "../components/booking";
 import Announcement from "../components/announcement";
+import Header from "../components/header";
+import Cookies from "js-cookie";
 
 const MENU = [
     { key: "worker", label: "Worker Management" },
@@ -14,12 +16,14 @@ const MENU = [
 
 export default function AdminPage() {
     const [active, setActive] = useState("pricing");
-
+    const logoutButton = () => {
+        Cookies.remove("accessToken");
+        Cookies.remove("refreshToken");
+        window.location.href = "/login";
+    };
     return (
         <div className="min-h-screen flex flex-col bg-gray-50">
-            <header className="bg-blue-700 text-white px-8 py-4 text-2xl font-bold">
-                Admin Dashboard
-            </header>
+            <Header onLogout={logoutButton} />
             <div className="flex flex-1">
                 {/* Sidebar Menu */}
                 <nav className="w-64 bg-white border-r p-6">

@@ -26,3 +26,14 @@ model RefreshToken {
   createdAt DateTime @default(now())
   expiresAt DateTime
 }
+
+model Woker {
+  id        Int      @id @default(autoincrement())
+  name      String
+  birthDate DateTime
+  email     String   @unique
+  phone     String
+  address   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

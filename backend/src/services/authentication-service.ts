@@ -1,12 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import config from "../config/config";
+import { StringValue } from "ms";
 
 const prisma = new PrismaClient();
-const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
-const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "your_jwt_refresh_secret";
-const ACCESS_TOKEN_EXPIRES_IN = "15m";
-const REFRESH_TOKEN_EXPIRES_IN = "7d";
 
 export async function loginService(email: string, password: string) {
     const user = await prisma.user.findUnique({ where: { email } });
@@ -14,16 +12,15 @@ export async function loginService(email: string, password: string) {
 
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) return null;
-
     const accessToken = jwt.sign(
         { userId: user.id, role: user.role },
-        JWT_SECRET,
-        { expiresIn: ACCESS_TOKEN_EXPIRES_IN }
+        config.jwtSecret,
+        { expiresIn: config.accessTokenExpiresIn as StringValue }
     );
     const refreshToken = jwt.sign(
         { userId: user.id },
-        JWT_REFRESH_SECRET,
-        { expiresIn: REFRESH_TOKEN_EXPIRES_IN }
+        config.jwtRefreshSecret,
+        { expiresIn: config.refreshTokenExpiresIn as StringValue }
     );
 
     // Calculate expiry date (7 days from now)
@@ -51,4 +48,29 @@ export async function logoutService(refreshToken: string) {
     await prisma.refreshToken.deleteMany({
         where: { token: refreshToken }
     });
+}
+
+export async function refreshTokenService(refreshToken: string) {
+    // Check if refresh token exists in DB
+    const tokenRecord = await prisma.refreshToken.findUnique({
+        where: { token: refreshToken },
+        include: { user: true },
+    });
+    if (!tokenRecord || !tokenRecord.user) return null;
+
+    // Verify refresh token validity
+    try {
+        jwt.verify(refreshToken, config.jwtRefreshSecret);
+    } catch {
+        return null;
+    }
+
+    // Issue new access token
+    const accessToken = jwt.sign(
+        { userId: tokenRecord.user.id, role: tokenRecord.user.role },
+        config.jwtSecret,
+        { expiresIn: config.accessTokenExpiresIn as StringValue }
+    );
+
+    return { accessToken };
 }
