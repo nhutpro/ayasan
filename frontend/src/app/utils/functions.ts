@@ -71,7 +71,6 @@ export async function fetchWithAuth(
 
             }
         }
-        // logout();
-        // throw new Error("Failed to fetch data");
+        throw new Error("Failed to fetch data");
     }
 }

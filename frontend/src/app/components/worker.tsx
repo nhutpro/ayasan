@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import { fetchWithAuth } from "../utils/functions";
 import moment from "moment";
 import { ErrorMessage, Field, Form, Formik } from "formik";
+import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
 
 type Worker = {
     id: number;
@@ -33,7 +35,7 @@ const Worker: React.FC = () => {
 
     const fetchWorkers = async () => {
         setIsLoading(true);
-        const response: any = await fetchWithAuth(`/workers?page=${page}&pageSize=${PAGE_SIZE}`);
+        const response: any = await fetchWithAuth(`/worker?page=${page}&pageSize=${PAGE_SIZE}`);
         if (!response) {
             throw new Error("Failed to fetch workers");
         }
@@ -48,36 +50,18 @@ const Worker: React.FC = () => {
     // }, [page]);
 
     useEffect(() => {
-        if (showForm) {
+        fetchWorkers();
 
-        } else {
-            setPage(1);
-            fetchWorkers();
-        }
     }, [showForm, page])
 
 
-    const handleAddWorker = (e: React.FormEvent<HTMLFormElement>) => {
-        // e.preventDefault();
-        // const nextId = workerList.length > 0 ? Math.max(...workerList.map(w => w.id)) + 1 : 1;
-        // setWorkerList([
-        //     ...workerList,
-        //     {
-        //         id: nextId,
-        //         name: newWorker.name,
-        //         address: newWorker.address,
-        //         phone: newWorker.phone,
-        //         birthDate: newWorker.birthDate,
-        //         createdAt: new Date().toLocaleDateString(),
-        //     },
-        // ]);
-        // setNewWorker({ name: "", address: "", phone: "", birthDate: "" });
-        // setShowForm(false);
-        // setPage(Math.ceil((workerList.length + 1) / PAGE_SIZE)); // Go to last page
-    };
-
     return (
+
+
         <div>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}></ToastContainer>
             {!showForm && (
                 <div style={{ display: "flex", justifyContent: "end", alignItems: "center" }}>
                     <button
@@ -129,10 +113,18 @@ const Worker: React.FC = () => {
                     }}
                     onSubmit={async (values, { setSubmitting, resetForm }) => {
                         // Handle submit logic here (e.g., call API)
-                        console.log("Worker values:", values);
+                        setIsLoading(true);
+                        try {
+                            const response = await fetchWithAuth("/worker", {}, "POST", values);
+                            if (response && response.data) {
+                                toast.success("Worker created successfully");
+                            }
+                        } catch (error) {
+                            toast.error("Failed to create worker");
+                        }
+                        setIsLoading(false);
                         setSubmitting(false);
                         resetForm();
-                        setShowForm(false);
                     }}
                 >
                     {({ isSubmitting }) => (

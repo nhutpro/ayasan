@@ -27,7 +27,7 @@ model RefreshToken {
   expiresAt DateTime
 }
 
-model Woker {
+model Worker {
   id        Int      @id @default(autoincrement())
   name      String
   birthDate DateTime

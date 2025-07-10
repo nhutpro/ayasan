@@ -4,12 +4,12 @@ const prisma = new PrismaClient();
 export async function getWorkers(page: number, pageSize: number) {
     const skip = (page - 1) * pageSize;
     const [workers, total] = await Promise.all([
-        prisma.woker.findMany({
+        prisma.worker.findMany({
             skip,
             take: pageSize,
             orderBy: { id: "asc" },
         }),
-        prisma.woker.count(),
+        prisma.worker.count(),
     ]);
     return {
         workers,
@@ -18,4 +18,16 @@ export async function getWorkers(page: number, pageSize: number) {
         pageSize,
         totalPages: Math.ceil(total / pageSize),
     };
+}
+
+export async function createWorker(data: {
+    name: string;
+    address: string;
+    phone: string;
+    email: string;
+    birthDate: Date;
+}) {
+    return prisma.worker.create({
+        data,
+    });
 }
