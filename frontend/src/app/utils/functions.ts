@@ -66,12 +66,11 @@ export async function fetchWithAuth(
                 const retryRes = await axios.request(config);
                 return retryRes.data;
             } else {
-                // logout();
-                // throw new Error("Refresh token expired or invalid");
+                logout();
 
             }
         }
-        throw new Error("Failed to fetch data");
+        logout();
     }
 }
 

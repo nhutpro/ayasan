@@ -12,6 +12,7 @@ export async function getBookings(page: number, pageSize: number) {
         }),
         prisma.booking.count(),
     ]);
+   
     const bookings = pureBookings.map(booking => ({
         ...booking,
         to: getUTC_HHmm(booking.to.toISOString()),
