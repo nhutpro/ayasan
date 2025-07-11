@@ -1,0 +1,148 @@
+{
+	"info": {
+		"_postman_id": "4e1b58c3-03c5-4c2f-b80d-cc35a4d345fe",
+		"name": "asyan",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20079091"
+	},
+	"item": [
+		{
+			"name": "api/stripe/payment",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"to\": \"tnhut803@gmail.com\",\n  \"customerName\": \"Alice\",\n  \"amount\": 100\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/mail/payment-success",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"mail",
+						"payment-success"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/mail/payment-success",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"to\": \"customer@example.com\",\n  \"customerName\": \"Alice\",\n  \"amount\": 100\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/mail/payment-success",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"mail",
+						"payment-success"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "service",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1MjE5MDI0NSwiZXhwIjoxODUyMTkxMTQ1fQ.BZD0TL0u-N3rJm17KtGZ7uEfJkZfnZ5M1BWfaY3INeE",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 1,\n    \"price\": 30\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/service",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"service"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "service",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInJvbGUiOiJBRE1JTiIsImlhdCI6MTc1MjE5MDI0NSwiZXhwIjoxODUyMTkxMTQ1fQ.BZD0TL0u-N3rJm17KtGZ7uEfJkZfnZ5M1BWfaY3INeE",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 1,\n    \"price\": 30\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/service",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"service"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

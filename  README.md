@@ -26,3 +26,7 @@ The backend API will be available at: http://localhost:5000
 
 login admin@ayasan.jp
 pass admin123
+```
+# Full-Stack App For test stripe and send mail using collection
+
+
