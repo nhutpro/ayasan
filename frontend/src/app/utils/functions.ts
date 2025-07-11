@@ -74,3 +74,18 @@ export async function fetchWithAuth(
         throw new Error("Failed to fetch data");
     }
 }
+
+export function formatHHmmToUTC(timeStr: string | undefined): string {
+    if (!timeStr) return '';
+
+    const [hour, minute] = timeStr.split(':').map(Number);
+
+    return `1970-01-01T${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:00.000Z`;
+}
+
+export function formatYYYYMMDDToUTC(dateStr: string | undefined): string {
+    if (!dateStr) return '';
+
+    return `${dateStr}T00:00:00.000Z`; // UTC ISO 8601 string
+}
+

@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
         searchParams.forEach((value, key) => {
             params[key] = value;
         });
-        const response = await axios.get(`${process.env.BACKEND_URL}/worker`, {
+        const response = await axios.get(`${process.env.BACKEND_URL}/booking`, {
             headers: {
                 "Authorization": req.headers.get("authorization")
             },
@@ -35,11 +35,10 @@ export async function GET(req: NextRequest) {
     }
 }
 
-export async function POST(req: NextRequest) {
+export async function PATCH(req: NextRequest) {
     try {
         const body = await req.json();
-        console.log("Request body:", body);
-        const response = await axios.post(`${process.env.BACKEND_URL}/worker`, body, {
+        const response = await axios.patch(`${process.env.BACKEND_URL}/booking`, body, {
             headers: {
                 "Authorization": req.headers.get("authorization")
             }

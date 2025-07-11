@@ -1,5 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import prisma from "../../prisma";
 
 export async function getWorkers(page: number, pageSize: number) {
     const skip = (page - 1) * pageSize;

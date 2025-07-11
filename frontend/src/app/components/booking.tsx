@@ -1,14 +1,18 @@
 'use client';
-import React, { useState } from 'react';
+import React, { use, useCallback, useEffect, useState } from 'react';
 import { FaEdit, FaSave, FaTimes } from 'react-icons/fa';
+import { fetchWithAuth, formatYYYYMMDDToUTC, formatHHmmToUTC } from '../utils/functions';
+import { Service } from './service';
+import moment from 'moment';
 
 type Booking = {
     id: number;
-    customer: string;
+    customerName: string;
     address: string;
     phone: string;
     email: string;
-    service: 'Cleaning' | 'Cooking';
+    serviceId: number;
+    service: Service;
     date: string;
     from: string;
     to: string;
@@ -16,38 +20,37 @@ type Booking = {
 };
 
 const SERVICE_OPTIONS = ['Cleaning', 'Cooking'] as const;
-const STATUS_OPTIONS = ['Paid', 'work in progress', 'done'] as const;
+const STATUS_OPTIONS = ['Paid', 'Work In Progress', 'Done'] as const;
 const PAGE_SIZE = 20;
 
-// Dummy data for demonstration
-const generateBookings = (count: number): Booking[] =>
-    Array.from({ length: count }, (_, i) => ({
-        id: i + 1,
-        customer: `Customer ${i + 1}`,
-        address: `Address ${i + 1}`,
-        phone: `012345678${i}`,
-        email: `customer${i + 1}@mail.com`,
-        service: SERVICE_OPTIONS[i % 2],
-        date: `2024-06-${(i % 30) + 1}`.padStart(10, '0'),
-        from: '09:00',
-        to: '17:00',
-        status: STATUS_OPTIONS[i % 3],
-    }));
 
 const Booking: React.FC = () => {
-    const [bookings, setBookings] = useState<Booking[]>(generateBookings(53));
+    const [bookingList, setBookingList] = useState<Booking[]>([]);
+    const [serviceList, setServiceList] = useState<Service[]>([]);
     const [editingId, setEditingId] = useState<number | null>(null);
     const [editData, setEditData] = useState<Partial<Booking>>({});
-    const [page, setPage] = useState(1);
+    const [page, setPage] = useState<number>(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [isLoading, setIsLoading] = useState(false)
 
-    const startIdx = (page - 1) * PAGE_SIZE;
-    const endIdx = startIdx + PAGE_SIZE;
-    const pagedBookings = bookings.slice(startIdx, endIdx);
-    const totalPages = Math.ceil(bookings.length / PAGE_SIZE);
+    const fetchBookingAndService = useCallback(async () => {
+        setIsLoading(true);
+        const [bookingResponse, serviceResponse]: any = await Promise.all([
+            fetchWithAuth(`/booking?page=${page}&pageSize=${PAGE_SIZE}`),
+            fetchWithAuth(`/service?isAll=true`)
+        ]);
+        setBookingList(bookingResponse.data.bookings);
+        setServiceList(serviceResponse.data.services);
+        setTotalPages(bookingResponse.data.totalPages);
+        setIsLoading(false);
+    }, [page]);
 
-    const handleEdit = (id: number) => {
-        setEditingId(id);
-        const booking = bookings.find(b => b.id === id);
+    useEffect(() => {
+        fetchBookingAndService();
+    }, [fetchBookingAndService]);
+
+    const handleEdit = (booking: Booking) => {
+        setEditingId(booking.id);
         setEditData({ ...booking });
     };
 
@@ -56,14 +59,22 @@ const Booking: React.FC = () => {
         setEditData({});
     };
 
-    const handleSave = () => {
-        setBookings(prev =>
-            prev.map(b =>
-                b.id === editingId ? { ...b, ...editData } as Booking : b
-            )
-        );
+    const handleSave = async () => {
+        const { date, from, to, ...restData } = editData;
+        const updateData = await fetchWithAuth('/booking', {}, 'PATCH', {
+            id: editingId,
+            ...restData,
+            date: formatYYYYMMDDToUTC(date),
+            from: formatHHmmToUTC(from),
+            to: formatHHmmToUTC(to),
+        });
+
+        if (!updateData) {
+            throw new Error("Failed to update booking");
+        }
         setEditingId(null);
         setEditData({});
+        fetchBookingAndService();
     };
 
     const handleChange = (field: keyof Booking, value: string) => {
@@ -91,7 +102,7 @@ const Booking: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {pagedBookings.map(booking => (
+                        {bookingList.map(booking => (
                             <tr key={booking.id} className="hover:bg-gray-50">
                                 <td className="py-2 px-3 border">{booking.id}</td>
                                 {editingId === booking.id ? (
@@ -99,8 +110,8 @@ const Booking: React.FC = () => {
                                         <td className="py-2 px-3 border">
                                             <input
                                                 className="border rounded px-2 py-1 w-full"
-                                                value={editData.customer ?? ''}
-                                                onChange={e => handleChange('customer', e.target.value)}
+                                                value={editData.customerName ?? ''}
+                                                onChange={e => handleChange('customerName', e.target.value)}
                                             />
                                         </td>
                                         <td className="py-2 px-3 border">
@@ -127,11 +138,11 @@ const Booking: React.FC = () => {
                                         <td className="py-2 px-3 border">
                                             <select
                                                 className="border rounded px-2 py-1 w-full"
-                                                value={editData.service ?? ''}
-                                                onChange={e => handleChange('service', e.target.value)}
+                                                value={editData.serviceId ?? ''}
+                                                onChange={e => handleChange('serviceId', e.target.value)}
                                             >
-                                                {SERVICE_OPTIONS.map(opt => (
-                                                    <option key={opt} value={opt}>{opt}</option>
+                                                {serviceList.map(opt => (
+                                                    <option key={opt.id} value={opt.id}>{opt.name}</option>
                                                 ))}
                                             </select>
                                         </td>
@@ -139,7 +150,7 @@ const Booking: React.FC = () => {
                                             <input
                                                 type="date"
                                                 className="border rounded px-2 py-1 w-full"
-                                                value={editData.date ?? ''}
+                                                value={editData.date}
                                                 onChange={e => handleChange('date', e.target.value)}
                                             />
                                         </td>
@@ -147,7 +158,7 @@ const Booking: React.FC = () => {
                                             <input
                                                 type="time"
                                                 className="border rounded px-2 py-1 w-full"
-                                                value={editData.from ?? ''}
+                                                value={editData.from}
                                                 onChange={e => handleChange('from', e.target.value)}
                                             />
                                         </td>
@@ -155,8 +166,8 @@ const Booking: React.FC = () => {
                                             <input
                                                 type="time"
                                                 className="border rounded px-2 py-1 w-full"
-                                                value={editData.to ?? ''}
-                                                onChange={e => handleChange('to', e.target.value)}
+                                                value={editData.to}
+                                                onChange={e => { return handleChange('to', e.target.value) }}
                                             />
                                         </td>
                                         <td className="py-2 px-3 border">
@@ -189,11 +200,11 @@ const Booking: React.FC = () => {
                                     </>
                                 ) : (
                                     <>
-                                        <td className="py-2 px-3 border">{booking.customer}</td>
+                                        <td className="py-2 px-3 border">{booking.customerName}</td>
                                         <td className="py-2 px-3 border">{booking.address}</td>
                                         <td className="py-2 px-3 border">{booking.phone}</td>
                                         <td className="py-2 px-3 border">{booking.email}</td>
-                                        <td className="py-2 px-3 border">{booking.service}</td>
+                                        <td className="py-2 px-3 border">{booking.service.name}</td>
                                         <td className="py-2 px-3 border">{booking.date}</td>
                                         <td className="py-2 px-3 border">{booking.from}</td>
                                         <td className="py-2 px-3 border">{booking.to}</td>
@@ -201,7 +212,7 @@ const Booking: React.FC = () => {
                                         <td className="py-2 px-3 border">
                                             <button
                                                 className="text-blue-600 hover:text-blue-800"
-                                                onClick={() => handleEdit(booking.id)}
+                                                onClick={() => handleEdit(booking)}
                                                 aria-label="Edit"
                                             >
                                                 <FaEdit />
@@ -239,3 +250,4 @@ const Booking: React.FC = () => {
 };
 
 export default Booking;
+
