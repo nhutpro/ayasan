@@ -4,8 +4,8 @@ import logger from "../utils/logger";
 
 export async function sendPaymentSuccessMailController(req: Request, res: Response) {
     try {
-        const { to, customerName, amount } = req.body;
-        if (!to || !customerName || !amount) {
+        const { to, customerName } = req.body;
+        if (!to || !customerName) {
             return res.status(400).json({ error: "Missing required fields" });
         }
         await sendPaymentSuccessMail(to, customerName);
