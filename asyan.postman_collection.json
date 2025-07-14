@@ -1,0 +1,70 @@
+{
+	"info": {
+		"_postman_id": "9a176ece-5139-49d4-85a1-47637df2f42b",
+		"name": "asyan",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20079091"
+	},
+	"item": [
+		{
+			"name": "/api/mail/payment-success",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"to\": \"tnhut803@gmail.com\",\n  \"customerName\": \"Alice\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/mail/payment-success",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"mail",
+						"payment-success"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/api/stripe/payment",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{    \"customerName\": \"Nhut pro\",\n    \"address\": \"1233 Main St\",\n    \"phone\": \"'555-0001'\",\n    \"email\": \"tnhut803@gmail.com\",\n    \"serviceId\": 1,\n    \"date\": \"1919-05-08T00:00:00.000Z\",\n    \"from\": \"1970-01-01T09:00:00.000Z\",\n    \"to\": \"1970-01-01T10:00:00.000Z\",\n    \"serviceName\": \"Housing Clean\",\n    \"amount\": 1000,\n    \"currency\": \"usd\"\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/stripe/payment",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"stripe",
+						"payment"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
