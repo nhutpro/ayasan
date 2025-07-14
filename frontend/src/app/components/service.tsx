@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { FaEdit, FaSave, FaTimes } from 'react-icons/fa';
-import { fetchWithAuth } from '../utils/functions';
+import { fetchWithAuth, logout } from '../utils/functions';
 import { toast, ToastContainer } from 'react-toastify';
 
 export type Service = {
@@ -20,15 +20,21 @@ const ServiceList: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false)
 
     const fetchServices = useCallback(async () => {
-        setIsLoading(true);
-        const response: any = await fetchWithAuth(`/service?page=${page}&pageSize=${PAGE_SIZE}`);
-        if (!response) {
-            throw new Error("Failed to fetch services");
-        }
+        try {
+            setIsLoading(true);
+            const response: any = await fetchWithAuth(`/service?page=${page}&pageSize=${PAGE_SIZE}`);
+            if (!response) {
+                throw new Error("Failed to fetch services");
+            }
 
-        setServiceList(response.data.services);
-        setTotalPages(response.data.totalPages);
-        setIsLoading(false);
+            setServiceList(response.data.services);
+            setTotalPages(response.data.totalPages);
+            setIsLoading(false);
+        } catch (error) {
+            console.error("Error fetching services:", error);
+            logout();
+            return;
+        }
     }, [page]);
 
     const updateServicePrice = useCallback(async (id: number, price: number) => {
@@ -41,11 +47,12 @@ const ServiceList: React.FC = () => {
             if (!response) {
                 throw new Error("Failed to update service price");
             }
+             setIsLoading(false);
         } catch (error) {
             console.error("Error updating service price:", error);
-        } finally {
-            setIsLoading(false);
-        }
+            logout();
+            return;
+        } 
     }, []);
 
     useEffect(() => {

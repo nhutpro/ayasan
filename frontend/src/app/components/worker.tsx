@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchWithAuth } from "../utils/functions";
+import { fetchWithAuth, logout } from "../utils/functions";
 import moment from "moment";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { toast, ToastContainer } from "react-toastify";
@@ -26,20 +26,22 @@ const Worker: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false)
 
     const fetchWorkers = async () => {
-        setIsLoading(true);
-        const response: any = await fetchWithAuth(`/worker?page=${page}&pageSize=${PAGE_SIZE}`);
-        if (!response) {
-            throw new Error("Failed to fetch workers");
+        try {
+            setIsLoading(true);
+            const response: any = await fetchWithAuth(`/worker?page=${page}&pageSize=${PAGE_SIZE}`);
+            if (!response) {
+                throw new Error("Failed to fetch workers");
+            }
+
+            setWorkerList(response.data.workers);
+            setTotalPages(response.data.totalPages);
+            setIsLoading(false);
+        } catch (error) {
+            console.error("Error fetching workers:", error);
+            logout();
+            return;
         }
-
-        setWorkerList(response.data.workers);
-        setTotalPages(response.data.totalPages);
-        setIsLoading(false);
     }
-
-    // useEffect(() => {
-    //     fetchWorkers();
-    // }, [page]);
 
     useEffect(() => {
         fetchWorkers();

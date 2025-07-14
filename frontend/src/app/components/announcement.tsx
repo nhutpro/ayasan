@@ -2,7 +2,7 @@
 import axios from 'axios';
 import moment from 'moment';
 import React, { useCallback, useEffect, useState } from 'react';
-import { fetchWithAuth } from '../utils/functions';
+import { fetchWithAuth, logout } from '../utils/functions';
 import { Formik } from 'formik';
 
 type Announcement = {
@@ -37,10 +37,11 @@ const Announcement: React.FC = () => {
             console.log('Fetched announcements:', response.data);
             setAnnouncementList(response.data.data.announcements);
             setTotalPages(response.data.data.totalPages);
+            setIsLoading(false);
         } catch (error) {
             console.error('Error fetching announcements:', error);
-        } finally {
-            setIsLoading(false);
+            logout();
+            return;
         }
     }, [page]);
 
@@ -52,12 +53,13 @@ const Announcement: React.FC = () => {
             const response = await fetchWithAuth(`/announcement`, {}, 'PATCH', {
                 ...announcement,
             });
-            console.log('Updated announcement:', response.data);
+            setIsLoading(false);
         } catch (error) {
             console.error('Error updating announcement:', error);
-        } finally {
-            setIsLoading(false);
+            logout();
+            return;
         }
+
     }, []);
 
     const handleEditChange = (field: keyof Announcement, value: string) => {
@@ -97,12 +99,13 @@ const Announcement: React.FC = () => {
             await fetchWithAuth(`/announcement/${id}`, {}, 'DELETE');
             console.log('Deleted announcement:', id);
             fetchAnnouncements();
+            setDeleteId(null);
+            setIsLoading(false);
         } catch (error) {
             setDeleteId(null);
             console.error('Error deleting announcement:', error);
-        } finally {
-            setDeleteId(null);
-            setIsLoading(false);
+            logout();
+            return;
         }
     };
 
