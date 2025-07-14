@@ -36,31 +36,31 @@ pass admin123
 # Full-Stack App For test stripe and send mail using collection
 
 # test email feature
-Notice: Make sure that you started backend
-Step 1: import [postman collection](asyan.postman_collection.json)
-Step 2: change email into your email 
+Notice: Make sure that you started backend </br>
+**Step 1**: import [postman collection](asyan.postman_collection.json) </br>
+**Step 2**: change email into your email 
 ![alt text](email-1.png)
-Step 3: Click send button 
+**Step 3**: Click send button </br>
 ![alt text](email-2.png)
-Step 4: Check your email, it should have email like below picture
+**Step 4**: Check your email, it should have email like below picture </br>
 ![alt text](email-3.png)
 
 # test payment stripe 
-Notice: You startd backend and webhook stripe
-Step 1: import [postman collection](asyan.postman_collection.json)
-Step 2: change email and your name in request 
+Notice: You startd backend and webhook stripe </br>
+**Step 1**: import [postman collection](asyan.postman_collection.json) </br>
+**Step 2**: change email and your name in request </br>
 ![alt text](stripe-1.png)
-Step 3: Click Send Button
+**Step 3**: Click Send Button </br>
 ![alt text](stripe-2.png)
-Step 4: Open new browser tab with value of url
+**Step 4**: Open new browser tab with value of url </br>
 ![alt text](stripe-3.png)
-Step 5: type your payment info
+**Step 5**: type your payment info </br>
 ![alt text](stripe-4.png) 
-Step 6: Check result 
-- browser show success page 
+**Step 6**: Check result </br>
+- browser show success page </br>
 ![alt text](stripe-5.png)
-- Receive email 
+- Receive email </br>
 ![alt text](stripe-6.png)
-- Have new record for booking 
+- Have new record for booking </br>
 ![alt text](stripe-7.png)
 
