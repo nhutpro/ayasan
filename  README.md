@@ -35,7 +35,7 @@ pass admin123
 ```
 # Full-Stack App For test stripe and send mail using collection
 
-# test email feature
+# Test Email Feature
 Notice: Make sure that you started backend </br>
 **Step 1**: import [postman collection](asyan.postman_collection.json) </br>
 **Step 2**: change email into your email 
@@ -45,7 +45,7 @@ Notice: Make sure that you started backend </br>
 **Step 4**: Check your email, it should have email like below picture </br>
 ![alt text](email-3.png)
 
-# test payment stripe 
+# Test Payment Stripe 
 Notice: You startd backend and webhook stripe </br>
 **Step 1**: import [postman collection](asyan.postman_collection.json) </br>
 **Step 2**: change email and your name in request </br>
