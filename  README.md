@@ -14,12 +14,18 @@ start database => docker compose up
 cd ./backend
 yarn install
 yarn dev
+![alt text](start-backend)
+
+#4. Start webhook stripe
+cd ./backend 
+yarn start-stripe
+![alt text](start-stripe.png)
 
 # 4. In a new terminal, start the frontend
 cd ./frontend
 yarn install
 yarn dev
-
+![alt text](start-frontend.png)
 
 The frontend will be available at: http://localhost:3000
 The backend API will be available at: http://localhost:5000
@@ -29,4 +35,32 @@ pass admin123
 ```
 # Full-Stack App For test stripe and send mail using collection
 
+# test email feature
+Notice: Make sure that you started backend
+Step 1: import [postman collection](asyan.postman_collection.json)
+Step 2: change email into your email 
+![alt text](email-1.png)
+Step 3: Click send button 
+![alt text](email-2.png)
+Step 4: Check your email, it should have email like below picture
+![alt text](email-3.png)
+
+# test payment stripe 
+Notice: You startd backend and webhook stripe
+Step 1: import [postman collection](asyan.postman_collection.json)
+Step 2: change email and your name in request 
+![alt text](stripe-1.png)
+Step 3: Click Send Button
+![alt text](stripe-2.png)
+Step 4: Open new browser tab with value of url
+![alt text](stripe-3.png)
+Step 5: type your payment info
+![alt text](stripe-4.png) 
+Step 6: Check result 
+- browser show success page 
+![alt text](stripe-5.png)
+- Receive email 
+![alt text](stripe-6.png)
+- Have new record for booking 
+![alt text](stripe-7.png)
 

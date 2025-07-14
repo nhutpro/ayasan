@@ -6,7 +6,8 @@
     "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server.ts",
     "build": "tsc",
     "start": "node dist/server.js",
-    "prisma": "prisma format && prisma generate"
+    "prisma": "prisma format && prisma generate",
+    "start-stripe": "stripe listen --forward-to localhost:5000/api/stripe/webhook"
   },
   "author": "",
   "license": "ISC",
